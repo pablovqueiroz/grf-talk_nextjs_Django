@@ -45,7 +45,7 @@ class SignUpView(APIView, Authentication):
     def post(self, request):
         name = request.data.get('name', '')
         email = request.data.get('email', '')
-        password = request.data.get('email', '')
+        password = request.data.get('password', '')
 
         if not name or not email or not password:
             raise AuthenticationFailed
@@ -67,7 +67,7 @@ class SignUpView(APIView, Authentication):
 class UserView(APIView): 
     def get(self, request): 
         #Update last_access
-        User.objects.filter(id=request.user.id).update(last_access=now)
+        User.objects.filter(id=request.user.id).update(last_access=now())
 
         user = UserSerializer(request.user).data
 

@@ -148,7 +148,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = '/media'
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -162,7 +162,7 @@ REST_FRAMEWORK = {
        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.isAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
