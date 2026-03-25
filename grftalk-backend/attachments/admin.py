@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from attachments.models import FileAttachments, AudioAttachments
+
+admin.site.register(FileAttachments)
+admin.site.register(AudioAttachments)
