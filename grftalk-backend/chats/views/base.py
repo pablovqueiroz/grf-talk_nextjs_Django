@@ -24,7 +24,7 @@ class BaseView(APIView):
     def has_existing_chat(self, user_id, to_user) -> Chat | None:
         chat = Chat.objects.filter((Q(from_user=user_id) & Q(to_user=to_user)) | (
             Q(from_user=to_user) & Q(to_user=user_id)),
-            delete_at__isnull=True
+            deleted_at__isnull=True
         ).first()
 
         if chat:
