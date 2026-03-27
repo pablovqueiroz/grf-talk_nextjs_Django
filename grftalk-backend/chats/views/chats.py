@@ -61,6 +61,21 @@ class ChatsView(BaseView):
 
 
 class ChatView(BaseView):
+    def get(self, request, chat_id):
+        chat = self.chat_belongs_to_user(
+            user_id=request.user.id,
+            chat_id=chat_id
+        )
+
+        serializer = ChatSerializer(
+            chat,
+            context={'user_id': request.user.id}
+        )
+
+        return Response({
+            'chat': serializer.data
+        })
+
     def delete(self, request, chat_id):
         # Checking if chat belongs to user
         chat = self.chat_belongs_to_user(
