@@ -1,162 +1,237 @@
 # GRF Talk Backend
 
-Backend service for the GRF Talk project, built with Django, Django REST Framework, MySQL, and JWT authentication.
+GRF Talk API built with Django and Django REST Framework.
 
-## Overview
+In its current state, the project covers authentication, user profile management, chats, messages, and related uploads. There is also a base for realtime events with Socket.IO, but it has not yet been connected to the ASGI app.
 
-This service currently provides:
+## Stack
 
-- User registration and sign-in
-- JWT-based authentication
-- Authenticated user profile retrieval and update
-- Media storage for user avatars
-- Database models for chats and attachments
-- Django admin registration for the main domain models
-
-The repository already contains `accounts`, `attachments`, and `chats` apps. At the moment, the HTTP API exposed through `core/urls.py` is focused on the `accounts` app. The `attachments` and `chats` apps are present as data models and admin resources, but do not yet expose public API routes in the current codebase.
-
-## Tech Stack
-
-- Python 3.14 in the local development environment
-- Django 5.2
+- Django 5
 - Django REST Framework
 - Simple JWT
 - MySQL
 - `django-cors-headers`
 - `python-dotenv`
-- Socket.IO server scaffold via `python-socketio`
+- `python-socketio`
 
-## Project Structure
+## Structure
 
 ```text
 grftalk-backend/
-|-- accounts/        # custom user model, auth flow, profile endpoints
-|-- attachments/     # attachment models and admin registration
-|-- chats/           # chat and message models and admin registration
-|-- core/            # Django settings, URL routing, ASGI/WSGI bootstrap, shared exceptions
+|-- accounts/      # custom user model, auth, and profile
+|-- attachments/   # file and audio attachment models
+|-- chats/         # chats, messages, serializers, and views
+|-- core/          # settings, urls, ASGI/WSGI, and socket
+|-- media/         # locally saved files in development
 |-- manage.py
-`-- venv/            # local virtual environment used in this workspace
+`-- README.md
 ```
 
-## Current API
+## Setup Local
 
-Base path: `/api/v1/accounts/`
-
-### Public endpoints
-
-- `POST /api/v1/accounts/signup`
-- `POST /api/v1/accounts/signin`
-
-### Authenticated endpoints
-
-- `GET /api/v1/accounts/me`
-- `PUT /api/v1/accounts/me`
-
-Authentication uses Bearer tokens generated with Simple JWT. The backend is configured with `JWTAuthentication` as the default authentication class and `IsAuthenticated` as the default permission class, while sign-in and sign-up explicitly allow anonymous access.
-
-## Data Model Summary
-
-### `accounts.User`
-
-Custom authentication model based on `AbstractBaseUser`.
-
-Main fields:
-
-- `name`
-- `email`
-- `avatar`
-- `last_access`
-- `is_Superuser`
-
-### `chats.Chat`
-
-Represents a conversation between two users.
-
-### `chats.ChatMessage`
-
-Represents a message inside a chat, including optional attachment metadata.
-
-### `attachments.FileAttachments`
-
-Stores uploaded file metadata such as name, extension, size, source path, and content type.
-
-### `attachments.AudioAttachments`
-
-Stores the source path for uploaded audio attachments.
-
-## Environment Variables
-
-The backend currently reads:
-
-- `DB_PASSWORD`: password for the local MySQL database user
-
-The current local setup also assumes:
-
-- database name: `grftalk`
-- database user: `root`
-- database host: `localhost`
-- database port: `3306`
-- frontend origin for CORS: `http://localhost:3000`
-- backend base URL used in serialized avatar URLs: `http://127.0.0.1:8000`
-
-## Local Development
-
-### 1. Create and activate a virtual environment
-
-On Windows PowerShell:
+### 1. Virtual environment
 
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 ```
 
-### 2. Install dependencies
+### 2. Dependencies
 
-This repository does not currently include a committed `requirements.txt`, so install the packages used by the project manually:
+This snapshot does not include `requirements.txt` or `pyproject.toml`. The libraries used by the code include:
 
 ```powershell
-pip install Django djangorestframework djangorestframework_simplejwt django-cors-headers python-dotenv mysqlclient python-socketio eventlet django-filter Markdown
+pip install Django djangorestframework djangorestframework_simplejwt django-cors-headers python-dotenv mysqlclient python-socketio eventlet
 ```
 
-### 3. Configure environment variables
+### 3. Environment variables
 
-Create a `.env` file in the backend root:
+Create `grftalk-backend/.env` with at least:
 
 ```env
 DB_PASSWORD=your_mysql_password
 ```
 
-### 4. Apply migrations
+## Database
+
+The current settings in `core/settings.py` assume:
+
+- engine: MySQL
+- database: `grftalk`
+- user: `root`
+- host: `localhost`
+- port: `3306`
+
+These values are also hardcoded in the codebase:
+
+- `CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]`
+- `CURRENT_URL = "http://127.0.0.1:8000"`
+
+## Running the Project
 
 ```powershell
 .\venv\Scripts\python.exe manage.py migrate
-```
-
-### 5. Run the server
-
-```powershell
 .\venv\Scripts\python.exe manage.py runserver
 ```
 
-### 6. Optional admin user
+Default local server: `http://127.0.0.1:8000`
+
+### Admin
 
 ```powershell
 .\venv\Scripts\python.exe manage.py createsuperuser
 ```
 
-## Media Files
+Panel: `http://127.0.0.1:8000/admin/`
 
-- Uploaded avatars are stored under `media/avatars/`
-- `MEDIA_URL` is configured as `/media/`
-- In development, Django serves media files through `static()` in `core/urls.py`
+## Authentication
 
-## Notes About the Current Implementation
+- `JWTAuthentication` is the default authentication class
+- `IsAuthenticated` is the default permission class
+- Public endpoints explicitly allow `AllowAny`
+- Access tokens are valid for 7 days
 
-- The backend is using a custom user model declared as `AUTH_USER_MODEL = "accounts.User"`.
-- JWT access tokens currently have a lifetime of 7 days.
-- A Socket.IO server instance exists in `core/socket.py`, but it is not yet wired into the ASGI application.
-- Chat and attachment features are partially scaffolded at the model/admin level and appear ready for API expansion.
-- There is no generated API documentation, OpenAPI schema setup, or committed test suite coverage yet beyond the default app test modules.
+`signin` and `signup` responses return:
+
+- `user`
+- `access_token`
+
+## Current API
+
+Base URL local: `http://127.0.0.1:8000`
+
+### Accounts
+
+#### `POST /api/v1/accounts/signup`
+
+Creates a user with:
+
+- `name`
+- `email`
+- `password`
+
+#### `POST /api/v1/accounts/signin`
+
+Authenticates with:
+
+- `email`
+- `password`
+
+#### `GET /api/v1/accounts/me`
+
+Returns the authenticated user and updates `last_access`.
+
+#### `PUT /api/v1/accounts/me`
+
+Updates:
+
+- `name`
+- `email`
+- `password`
+- `avatar` via multipart form-data
+
+Avatar upload accepts only `image/png` and `image/jpeg`.
+
+### Chats
+
+#### `GET /api/v1/chats/`
+
+Lists chats for the authenticated user.
+
+#### `POST /api/v1/chats/`
+
+Creates or reuses a chat using the other user's `email`.
+
+#### `GET /api/v1/chats/{chat_id}`
+
+Returns a specific chat if it belongs to the authenticated user.
+
+#### `DELETE /api/v1/chats/{chat_id}`
+
+Soft deletes the chat by setting `deleted_at`.
+
+### Messages
+
+#### `GET /api/v1/chats/{chat_id}/messages`
+
+- Lists chat messages
+- Marks received messages as seen
+
+#### `POST /api/v1/chats/{chat_id}/messages`
+
+Accepts:
+
+- `body`
+- `file`
+- `audio`
+
+Current rules:
+
+- At least one of the three fields must be sent
+- File uploads are limited to 100 MB
+- Audio is saved as `.mp3`
+- Attachments are registered in `attachments`
+
+#### `DELETE /api/v1/chats/{chat_id}/messages/{message_id}`
+
+Soft deletes a message created by the current user.
+
+## Main Models
+
+### `accounts.User`
+
+- Custom user model with `email` as `USERNAME_FIELD`
+- Main fields: `name`, `email`, `avatar`, `last_access`, `is_Superuser`
+
+### `chats.Chat`
+
+- Relationship between `from_user` and `to_user`
+- Uses `viewed_at`, `deleted_at`, and `created_at`
+
+### `chats.ChatMessage`
+
+- Supports text, file, or audio
+- Identifies attachments through `attachment_code` and `attachment_id`
+
+### `attachments.FileAttachments`
+
+- `name`, `extension`, `size`, `src`, `content_type`
+
+### `attachments.AudioAttachments`
+
+- `src`
+
+## Local Media
+
+Files saved in development:
+
+- avatars in `media/avatars/`
+- files in `media/files/`
+- audios in `media/audios/`
+
+`MEDIA_URL` is configured as `/media/` and served by Django itself in development.
+
+## Realtime
+
+There is a Socket.IO server in `core/socket.py` used by the views to emit events such as:
+
+- `update_chat`
+- `update_chat_message`
+- `mark_messages_as_seen`
+- `mark_message_as_seen`
+
+Important current limitation:
+
+- The socket exists in the codebase, but it is not mounted in `asgi.py`
+- In practice, the realtime foundation is not fully wired end to end yet
+
+## Real Limitations and Pending Work
+
+- There is no versioned dependency file
+- Settings are still focused on local development
+- `ALLOWED_HOSTS` is empty
+- There is no dedicated API for attachments outside the message flow
+- App test files exist, but there is no documented or organized test suite coverage
 
 ## Useful Commands
 
@@ -164,14 +239,6 @@ DB_PASSWORD=your_mysql_password
 .\venv\Scripts\python.exe manage.py check
 .\venv\Scripts\python.exe manage.py makemigrations
 .\venv\Scripts\python.exe manage.py migrate
+.\venv\Scripts\python.exe manage.py createsuperuser
 .\venv\Scripts\python.exe manage.py runserver
 ```
-
-## Suggested Next Improvements
-
-- Add a committed `requirements.txt` or `pyproject.toml`
-- Add `.env.example`
-- Expose chat and attachment APIs
-- Wire Socket.IO into the ASGI entrypoint
-- Add automated tests for authentication and profile flows
-- Add API documentation for frontend integration
