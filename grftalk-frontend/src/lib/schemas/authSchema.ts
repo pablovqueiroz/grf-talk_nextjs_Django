@@ -29,3 +29,5 @@ export const signUpSchema = z.object({
     })
     .max(80, { message: "Max 80 characters" }),
 });
+
+export type SignUpData = z.infer<typeof signUpSchema>;
