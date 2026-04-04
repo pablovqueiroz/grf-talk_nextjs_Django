@@ -49,6 +49,7 @@ export const handleGetUser = async () => {
       },
     },
   );
+
   const jsonResponse = await response.json();
   const userData = jsonResponse.user;
 
