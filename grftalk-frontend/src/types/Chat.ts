@@ -24,7 +24,7 @@ export type APIDeleteChat = {
 
 export type updateChatEvent = {
   type?: "delete";
-  uqery: {
+  query: {
     chat_id?: number;
     users: number[];
   };
