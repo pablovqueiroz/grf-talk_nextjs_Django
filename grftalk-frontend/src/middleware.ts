@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { handleGetUser } from "./lib/server/auth";
 
 export async function middleware(request: NextRequest) {
-  const user = await handleGetUser();
+  const authToken = request.cookies.get(
+    process.env.NEXT_PUBLIC_AUTH_KEY as string,
+  )?.value;
+  const user = await handleGetUser(authToken);
 
   /* Redirect to signin if user is not authenticated */
   if (!request.nextUrl.pathname.startsWith("/auth") && !user) {
