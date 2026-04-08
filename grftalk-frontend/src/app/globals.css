@@ -137,6 +137,10 @@
   }
 }
 
+@utility h-app {
+  height: var(--app-height);
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }
