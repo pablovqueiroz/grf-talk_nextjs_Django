@@ -6,15 +6,14 @@ import { useEffect } from "react";
 import dayjs from "dayjs";
 import { io } from "socket.io-client";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
-import "dayjs/locale/pt-pt";
+import "dayjs/locale/pt";
 
 // Initializer socket.io
 export const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL as string);
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
-    // set locale to pt-pt
-    dayjs.locale("pt-pt");
+    dayjs.locale("pt");
   }, []);
 
   return (

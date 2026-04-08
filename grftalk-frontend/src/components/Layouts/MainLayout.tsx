@@ -12,10 +12,10 @@ import { Sheet, SheetContent } from "@/src/components/ui/sheet";
 
 type Props = {
   user: User | null;
-  chieldren: React.ReactNode;
+  children: React.ReactNode;
 };
 
-const MainLayout = ({ user, chieldren }: Props) => {
+const MainLayout = ({ user, children }: Props) => {
   const auth = useAuthStore();
   const { showChatsList, setShowChatsList } = useChatStore();
 
@@ -46,10 +46,10 @@ const MainLayout = ({ user, chieldren }: Props) => {
           <div className="hidden lg:block">
             <LeftSide />
           </div>
-          <div className="flex-1">{chieldren}</div>
+          <div className="flex-1">{children}</div>
         </div>
       ) : (
-        <div className="flex-1">{chieldren}</div>
+        <div className="flex-1">{children}</div>
       )}
 
       <Sheet open={showChatsList} onOpenChange={setShowChatsList}>
