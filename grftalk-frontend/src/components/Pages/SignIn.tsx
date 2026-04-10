@@ -1,0 +1,119 @@
+"use client";
+
+import { SignInData, signInSchema } from "@/src/lib/schemas/authSchema";
+import { handleSignIn } from "@/src/lib/server/auth-actions";
+import { useAuthStore } from "@/src/stores/authStore";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/src/components/ui/card";
+import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
+import { Field, FieldError, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
+
+const SignInPage = () => {
+  const [loading, setLoading] = useState(false);
+
+  const setUser = useAuthStore((state) => state.setUser);
+  const router = useRouter();
+  const form = useForm<SignInData>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (values: SignInData) => {
+    setLoading(true);
+    const response = await handleSignIn(values);
+
+    if (response.error) {
+      setLoading(false);
+      toast.error(response.error.message, { position: "top-center" });
+
+      return;
+    }
+
+    setUser(response.data.user);
+    toast.success("Authenticated successfully.", { position: "top-center" });
+
+    // Redirect to home
+    router.push("/");
+  };
+
+  return (
+    <main className="h-app flex items-center justify-center overflow-auto px-6">
+      <Card className="w-96">
+        <CardTitle className="m-auto py-2 text-xl">Login</CardTitle>
+        <CardDescription className="m-auto w-87.5 text-center">
+          Insert your email and password to access your account.
+        </CardDescription>
+
+        <CardContent>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="space-y-3">
+              {loading ? (
+                Array.from({ length: 3 }, (_, key) => (
+                  <Skeleton key={key} className="h-10 rounded-md" />
+                ))
+              ) : (
+                <>
+                  <Controller
+                    name="email"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="email">Email</FieldLabel>
+                        <Input
+                          {...field}
+                          id="email"
+                          type="email"
+                          placeholder="johndoe@email.com"
+                          aria-invalid={fieldState.invalid}
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                  <Controller
+                    name="password"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="password">Password</FieldLabel>
+                        <Input
+                          {...field}
+                          id="password"
+                          type="password"
+                          placeholder="********"
+                          aria-invalid={fieldState.invalid}
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                </>
+              )}
+            </div>
+
+            <Button disabled={loading}>Login</Button>
+          </form>
+        </CardContent>
+      </Card>
+    </main>
+  );
+};
+export default SignInPage;
