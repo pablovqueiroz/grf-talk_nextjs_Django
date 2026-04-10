@@ -4,11 +4,11 @@ import { useAuthStore } from "@/src/stores/authStore";
 import { useChatStore } from "@/src/stores/chatStore";
 import { User } from "@/src/types/User";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Header from "./Header";
-import { BarLoader } from "react-spinners";
 import LeftSide from "./LeftSide";
-import { Sheet, SheetContent } from "@/src/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle } from "@/src/components/ui/sheet";
+import { VisuallyHidden } from "radix-ui";
 
 type Props = {
   user: User | null;
@@ -16,32 +16,20 @@ type Props = {
 };
 
 const MainLayout = ({ user, children }: Props) => {
-  const auth = useAuthStore();
+  const { user: authUser, setUser } = useAuthStore();
   const { showChatsList, setShowChatsList } = useChatStore();
-
-  const [loading, setLoading] = useState(false);
 
   const pathname = usePathname();
 
   useEffect(() => {
-    const initialize = async () => {
-      if (user) auth.setUser(user);
-      setLoading(false);
-    };
-
-    initialize();
-  }, []);
+    if (user) setUser(user);
+  }, [user, setUser]);
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-slate- dark:bd-slate-950">
+    <div className="h-screen w-screen overflow-hidden bg-slate-100 dark:bg-slate-950">
       <Header />
-      {loading && (
-        <div className="flex items-center justify-center h-full">
-          <BarLoader color="#493cdd" />
-        </div>
-      )}
 
-      {!loading && auth.user && !pathname.includes("auth") ? (
+      {authUser && !pathname.includes("auth") ? (
         <div className="flex h-full">
           <div className="hidden lg:block">
             <LeftSide />
@@ -54,10 +42,14 @@ const MainLayout = ({ user, children }: Props) => {
 
       <Sheet open={showChatsList} onOpenChange={setShowChatsList}>
         <SheetContent className="p-0 bg-slate-100 dark:bg-slate-900">
+          <VisuallyHidden.Root>
+            <SheetTitle>Navegação</SheetTitle>
+          </VisuallyHidden.Root>
           <LeftSide variant="mobile" />
         </SheetContent>
       </Sheet>
     </div>
   );
 };
+
 export default MainLayout;

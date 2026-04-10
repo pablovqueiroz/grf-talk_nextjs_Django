@@ -4,7 +4,7 @@ import { updateUser } from "@/src/lib/requests";
 import { UpdateUserData, updateUserSchema } from "@/src/lib/schemas/userSchema";
 import { useAuthStore } from "@/src/stores/authStore";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardTitle } from "../ui/card";
@@ -15,7 +15,7 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-const Account = () => {
+const AccountPage = () => {
   const { user, setUser } = useAuthStore();
 
   const [loading, setLoading] = useState(false);
@@ -25,12 +25,25 @@ const Account = () => {
   const form = useForm<UpdateUserData>({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
-      name: user?.name,
-      email: user?.email,
+      name: user?.name ?? "",
+      email: user?.email ?? "",
       password: "",
       confirm_password: "",
     },
   });
+
+  const { reset } = form;
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        name: user.name,
+        email: user.email,
+        password: "",
+        confirm_password: "",
+      });
+    }
+  }, [reset, user]);
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -91,7 +104,7 @@ const Account = () => {
                     <div className="flex items-center gap-3">
                       <Avatar className="size-11">
                         <AvatarImage
-                          src={avatarUrl ?? user?.avatar}
+                          src={avatarUrl || user?.avatar}
                           alt={user?.name}
                         />
                         <AvatarFallback>
@@ -199,4 +212,4 @@ const Account = () => {
     </main>
   );
 };
-export default Account;
+export default AccountPage;
