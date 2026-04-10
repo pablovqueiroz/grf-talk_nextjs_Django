@@ -1,4 +1,4 @@
-import { email, z } from "zod";
+import { z } from "zod";
 
 // Update User
 export const updateUserSchema = z
@@ -23,9 +23,9 @@ export const updateUserSchema = z
             "The password must contain at least one letter, one number, and one special character.",
         },
       ),
-    confirm_passaword: z.string(),
+    confirm_password: z.string(),
   })
-  .refine((data) => data.password === data.confirm_passaword, {
+  .refine((data) => data.password === data.confirm_password, {
     message: "Passwords do not match.",
     path: ["confirm_passaword"],
   });
