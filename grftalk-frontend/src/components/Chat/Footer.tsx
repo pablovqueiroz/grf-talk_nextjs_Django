@@ -126,7 +126,7 @@ const Footer = ({ onSendMessage }: Props) => {
       {messageAttachment && (
         <div className="flex items-center justify-between text-slate-600 dark:text-slate-400 bg-slate-100/80 opacity-80 dark:bg-slate-900/80 px-10 py-2 border-t">
           <p className="text-xs">
-            File uploaded: {messageAttachment.name} | {messageAttachment.type}
+            File uploaded: {messageAttachment.name} • {messageAttachment.type}
           </p>
 
           <X

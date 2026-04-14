@@ -9,7 +9,7 @@ export type FileAttachment = {
 
 export type AudioAttachment = {
   id: number;
-  scr: string;
+  src: string;
 };
 
 export type Attachment = {
