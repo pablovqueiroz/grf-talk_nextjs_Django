@@ -4,9 +4,10 @@ import { useTheme } from "next-themes";
 import { ChangeEvent, useRef, useState } from "react";
 import { toast } from "sonner";
 import EmojiPicker, { Theme, type EmojiClickData } from "emoji-picker-react";
-import { Trash, X } from "lucide-react";
+import { Laugh, Mic, Paperclip, SendHorizonal, Trash, X } from "lucide-react";
 import { Button } from "../ui/button";
 import BounceLoader from "react-spinners/BounceLoader";
+import { Input } from "../ui/input";
 
 type Props = {
   onSendMessage: (data: {
@@ -148,11 +149,75 @@ const Footer = ({ onSendMessage }: Props) => {
             >
               <Trash className="size-5 text-slate-500 dark:text-slate-300" />
             </Button>
-            <div className="text-sm text-slate-500 dark:text-slate-300 flex items-center gap-2"></div>
-            <BounceLoader color="#f13434b3" size={17} />
+            <div className="text-sm text-slate-500 dark:text-slate-300 flex items-center gap-2">
+              <BounceLoader color="#f13434b3" size={17} />
+              Recording in progress...
+            </div>
+            <Button
+              className="ml-6"
+              size="sm"
+              title="Send Voice Message"
+              onClick={handleSendRecording}
+            >
+              <SendHorizonal className="text-slate-100" />
+            </Button>
           </div>
         ) : (
-          <></>
+          <>
+            <div className="flex items-center gap-2.5">
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Emoji"
+                onClick={handleToggleEmojiPicker}
+              >
+                <Laugh className="text-slate-500 dark:text-slate-300" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                title="Attachment"
+                onClick={() => document.getElementById("attachment")?.click()}
+              >
+                <Paperclip className="text-slate-500 dark:text-slate-300" />
+              </Button>
+
+              <Input
+                id="attachment"
+                type="file"
+                onChange={handleUploadAttachment}
+              />
+            </div>
+
+            <div className="flex-1">
+              <Input
+                value={messageValue}
+                onChange={(e) => setMessageValue(e.target.value)}
+                placeholder="Type a message"
+              />
+            </div>
+
+            <div>
+              {!messageValue && !messageAttachment ? (
+                <Button
+                  size="icon"
+                  title="Record voice message"
+                  onClick={handleStartRecording}
+                >
+                  <Mic className="text-slate-100" />
+                </Button>
+              ) : (
+                <Button
+                  size="icon"
+                  title="Send a message"
+                  onClick={handleSendMessage}
+                >
+                  <SendHorizonal className="text-slate-100" />
+                </Button>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>
