@@ -18,7 +18,7 @@ import { ScaleLoader } from "react-spinners";
 import MessageItem from "./MessageItem";
 import Footer from "./Footer";
 
-const Index = () => {
+const Chat = () => {
   const { chat, chatMessages, loading, setLoading, setChatMessages } =
     useChatStore();
   const { user } = useAuthStore();
@@ -159,4 +159,4 @@ const Index = () => {
     </div>
   );
 };
-export default Index;
+export default Chat;
