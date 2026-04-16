@@ -23,7 +23,7 @@ export type APIDeleteMessage = {
 };
 
 export type UpdateMessageEvent = {
-  type: "create" | "detele";
+  type: "create" | "delete";
   messsage?: Message;
   query: {
     chat_id: number;
