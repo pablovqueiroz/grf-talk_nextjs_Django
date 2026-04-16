@@ -1,13 +1,17 @@
 # GRF Talk Monorepo
 
-Repository containing the two GRF Talk apps:
+GRF Talk is a study project split into two applications:
 
 - `grftalk-backend/`: Django + Django REST Framework API
-- `grftalk-frontend/`: Next.js web app
+- `grftalk-frontend/`: Next.js web application
 
-Today, the backend already exposes authentication, profile, chats, and messages. The frontend is still at an early stage: the project foundation, domain types, schemas, and providers are already in place, but the main screen is still the default Next.js starter template.
+## Disclaimer
 
-## Structure
+This repository was created for learning purposes while exploring a full-stack chat application architecture with Django and Next.js.
+
+It was never promoted to production. The project remained a learning prototype because the expected infrastructure, media storage, and ongoing maintenance costs were too high for its intended scope.
+
+## Repository Structure
 
 ```text
 grf-talk_nextjs_Django/
@@ -20,27 +24,26 @@ grf-talk_nextjs_Django/
 
 ### Backend
 
-- Custom user model with email-based login
-- JWT authentication with `Simple JWT`
-- Signup, signin, profile, chat, and message endpoints
-- Avatar, file, and audio uploads
+- Custom user model with email-based authentication
+- JWT-based sign up, sign in, and profile endpoints
+- Chat and message endpoints already implemented
+- Avatar, file, and audio uploads available in development
 - Django admin enabled
-- Socket.IO base created, but not yet connected to the ASGI entrypoint
+- Socket.IO foundation exists, but realtime is not fully wired into ASGI
 
 ### Frontend
 
-- Next.js 16 with the App Router
+- Next.js 16 with App Router
 - React 19, TypeScript, and Tailwind CSS v4
-- `next-themes`, `sonner`, `next-nprogress-bar`, `zod`, and `socket.io-client`
-- Domain types for auth, user, chat, message, and attachment
-- Providers ready for theme, toast, progress, and socket
-- Main application UI not implemented yet
+- Base providers and domain types already created
+- Socket.IO client setup started
+- Main product interface is still incomplete
 
-## Running Locally
+## Local Development
 
-Open two terminals at the repository root.
+Run backend and frontend in separate terminals.
 
-### 1. Backend
+### Backend
 
 ```powershell
 cd .\grftalk-backend\
@@ -48,15 +51,15 @@ cd .\grftalk-backend\
 .\venv\Scripts\python.exe manage.py runserver
 ```
 
-The backend runs by default at `http://127.0.0.1:8000`.
+Default local URL: `http://127.0.0.1:8000`
 
-Minimum expected variable in `grftalk-backend/.env`:
+Minimum expected environment variable in `grftalk-backend/.env`:
 
 ```env
 DB_PASSWORD=your_mysql_password
 ```
 
-### 2. Frontend
+### Frontend
 
 ```powershell
 cd .\grftalk-frontend\
@@ -64,21 +67,21 @@ npm install
 npm run dev
 ```
 
-The frontend runs by default at `http://localhost:3000`.
+Default local URL: `http://localhost:3000`
 
-Frontend variable:
+Expected frontend environment variable:
 
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-## App Integration
+## Integration Notes
 
 - The backend allows CORS for `http://localhost:3000`
-- The frontend already has a Socket.IO client configured from `NEXT_PUBLIC_API_BASE_URL`
-- Even so, the global provider is not yet wired into the `layout`, and the backend still does not mount the Socket.IO server in ASGI, so the realtime integration is not complete
+- The frontend already reads `NEXT_PUBLIC_API_BASE_URL`
+- Realtime support is still incomplete because the frontend provider is not fully connected and the backend Socket.IO server is not mounted end to end
 
-## HTTP Routes Available Today
+## Available API Routes
 
 ### Accounts
 
@@ -99,12 +102,12 @@ NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 
 ## Notes
 
-- There is no shared root-level tooling to start frontend and backend together
-- The backend depends on a local MySQL instance with database `grftalk` and user `root`
-- There is no versioned `requirements.txt`, `pyproject.toml`, or `.env.example` in the backend in this snapshot
-- The frontend currently behaves more like a project foundation than a fully integrated product
+- There is no shared root command to start both apps together
+- The backend is still configured around a local MySQL setup
+- The backend snapshot does not include a dependency lock file or `.env.example`
+- The frontend is closer to a starter foundation than a finished product
 
-## App-Specific Documentation
+## Project Documentation
 
 - [Backend README](./grftalk-backend/README.md)
 - [Frontend README](./grftalk-frontend/README.md)

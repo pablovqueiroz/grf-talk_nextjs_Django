@@ -1,8 +1,12 @@
 # GRF Talk Frontend
 
-GRF Talk web frontend built with Next.js.
+Frontend application for the GRF Talk learning project, built with Next.js.
 
-In this snapshot, the technical foundation of the app is already in place, but the main product experience has not been implemented yet: the `/` route still renders the default `create-next-app` template.
+## Disclaimer
+
+This frontend was created as part of a learning project to study modern React, Next.js, form handling, validation, UI composition, and the first steps of a chat interface.
+
+It never reached production. The project remained a prototype because the expected deployment, backend, storage, and maintenance costs were higher than the value of pushing it live.
 
 ## Stack
 
@@ -24,26 +28,31 @@ npm run dev
 npm run build
 npm run start
 npm run lint
+npm run test:e2e
+npm run test:e2e:headed
+npm run test:e2e:ui
 ```
 
-## Setup Local
+## Local Setup
 
 ```powershell
 npm install
 npm run dev
 ```
 
-Default local server: `http://localhost:3000`
+Default local URL: `http://localhost:3000`
 
-## Environment Variables
+## Environment Variable
 
-The project uses `NEXT_PUBLIC_API_BASE_URL`, currently consumed by the Socket.IO provider:
+The frontend expects:
 
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-## Structure
+This value is currently used by the Socket.IO-related setup and is the expected base URL for API integration.
+
+## Project Structure
 
 ```text
 grftalk-frontend/
@@ -62,28 +71,28 @@ grftalk-frontend/
 
 ## What Already Exists
 
-- App Router configured
-- Global styling with Tailwind CSS v4
-- Light/dark theme support through `next-themes`
-- Toast notifications with `sonner`
-- Progress bar with `next-nprogress-bar`
-- `socket.io-client` initialization
-- Zod schemas for sign in and sign up
-- Shared domain types for the app's core entities
+- App Router is configured
+- Global styling is set up with Tailwind CSS v4
+- Theme handling is prepared with `next-themes`
+- Toast notifications are available through `sonner`
+- A top progress bar is prepared with `next-nprogress-bar`
+- Socket.IO client initialization has started
+- Zod schemas exist for authentication flows
+- Shared domain types already describe the main entities
 
-## What Is Not Wired Yet
+## What Is Still Missing
 
-Some pieces already exist in the codebase, but they are not connected to the main application flow yet:
+Some pieces exist in the repository but are not fully connected to the main app flow yet:
 
 - `src/components/Layouts/Providers.tsx` creates the global providers
 - The current `layout.tsx` does not wrap the app with `Providers`
-- `src/app/page.tsx` is still the default Next.js starter page
-- There are no HTTP calls implemented for the backend endpoints
-- There are no authentication, chat list, or message screens yet
+- `src/app/page.tsx` still renders the default Next.js starter page
+- API calls for the backend are not implemented yet
+- There are no finished authentication, chat list, or message screens
 
-## Expected Backend Integration
+## Expected Backend Endpoints
 
-The current backend exposes:
+The backend currently exposes:
 
 - `POST /api/v1/accounts/signup`
 - `POST /api/v1/accounts/signin`
@@ -97,27 +106,27 @@ The current backend exposes:
 - `POST /api/v1/chats/{chat_id}/messages`
 - `DELETE /api/v1/chats/{chat_id}/messages/{message_id}`
 
-At the moment, this integration still needs to be implemented in the frontend.
+Frontend integration with these routes is still pending.
 
 ## Important Files
 
-- `src/app/layout.tsx`: metadata and root structure
+- `src/app/layout.tsx`: root metadata and app shell
 - `src/app/page.tsx`: current home page
-- `src/app/globals.css`: global theme and CSS tokens
+- `src/app/globals.css`: global styles and design tokens
 - `src/components/Layouts/Providers.tsx`: theme, toast, progress, and socket setup
-- `src/lib/schemas/authSchemas.ts`: auth validation with Zod
+- `src/lib/schemas/authSchemas.ts`: validation schemas for auth
 
 ## Snapshot Notes
 
-- Metadata is still set to `Create Next App`
-- The initial UI still uses the default Next.js and Vercel logos and links
-- `package-lock.json` is present, so `npm` is the natural package manager here
-- `socket.io-client` is installed, but the backend does not yet complete the realtime flow through ASGI
+- Metadata still references the default Create Next App template
+- The initial UI still includes the default Next.js starter content
+- `package-lock.json` is present, so `npm` is the expected package manager
+- `socket.io-client` is installed, but the backend realtime pipeline is not complete yet
 
 ## Natural Next Steps
 
 - Connect `Providers` to the root `layout`
 - Replace the temporary home page with a real GRF Talk interface
-- Create an API layer for auth, chats, and messages
-- Implement JWT-based session state
-- Integrate uploads and request feedback in the UI
+- Build an API layer for authentication, chats, and messages
+- Add JWT-based session handling on the client
+- Integrate uploads and user feedback states in the UI
