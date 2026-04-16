@@ -4,6 +4,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+Button {
+  cursor: pointer;
+}
+
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
