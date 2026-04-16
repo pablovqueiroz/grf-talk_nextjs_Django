@@ -84,12 +84,17 @@ const AccountPage = () => {
     toast.success("Profile updated successfully1", { position: "top-center" });
   };
 
+  const handleFormSubmit = form.handleSubmit(onSubmit);
+
   return (
     <main className="h-app flex items-center justify-center overflow-auto px-6">
       <Card className="w-full sm:w-112.5">
         <CardContent>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={(event) => {
+              event.preventDefault();
+              void handleFormSubmit(event);
+            }}
             className=" pt-5 space-y-8"
           >
             <div className="space-y-6">
@@ -183,12 +188,12 @@ const AccountPage = () => {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="password">
+                        <FieldLabel htmlFor="confirm_password">
                           Confirm password
                         </FieldLabel>
                         <Input
                           {...field}
-                          id="password"
+                          id="confirm_password"
                           type="password"
                           placeholder="********"
                           aria-invalid={fieldState.invalid}

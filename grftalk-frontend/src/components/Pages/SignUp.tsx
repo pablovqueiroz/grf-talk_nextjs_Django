@@ -51,6 +51,8 @@ const SignUpPage = () => {
     router.push("/");
   };
 
+  const handleFormSubmit = form.handleSubmit(onSubmit);
+
   return (
     <main className="h-app flex items-center justify-center overflow-auto px-6">
       <Card className="w-96">
@@ -60,7 +62,13 @@ const SignUpPage = () => {
         </CardDescription>
 
         <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              void handleFormSubmit(event);
+            }}
+            className="space-y-8"
+          >
             <div className="space-y-3">
               {loading ? (
                 Array.from({ length: 3 }, (_, key) => (
@@ -130,7 +138,9 @@ const SignUpPage = () => {
               )}
             </div>
 
-            <Button disabled={loading}>Register</Button>
+            <Button type="submit" disabled={loading}>
+              Register
+            </Button>
           </form>
         </CardContent>
       </Card>

@@ -15,7 +15,8 @@ import {
 import { EllipsisVertical, Trash2 } from "lucide-react";
 
 const Header = () => {
-  const { chat, chats, setLoading } = useChatStore();
+  const { chat, chats, setChat, setChatMessages, setChats, setLoading } =
+    useChatStore();
 
   const userIsOnline = dayjs()
     .subtract(5, "minutes")
@@ -27,8 +28,16 @@ const Header = () => {
     if (!chat) return;
 
     setLoading(true);
-    await deleteChat(chat.id);
+    const response = await deleteChat(chat.id);
     setLoading(false);
+
+    if (response.error || !response.data?.success) {
+      return;
+    }
+
+    setChats(chats?.filter((item) => item.id !== chat.id) ?? null);
+    setChatMessages(null);
+    setChat(null);
   };
 
   return (
@@ -51,8 +60,14 @@ const Header = () => {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <EllipsisVertical className="size-5 text-slate-500 dark:text-slate-400 hover:text-primary cursor-pointer" />
-          <Button variant="outline">Open</Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="cursor-pointer text-slate-500 dark:text-slate-400"
+            aria-label="Open chat actions"
+          >
+            <EllipsisVertical className="size-5" />
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem

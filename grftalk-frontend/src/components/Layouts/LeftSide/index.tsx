@@ -11,7 +11,6 @@ import { Button } from "../../ui/button";
 import { CheckCheck, FileText, Mic, Plus, Search } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import dayjs from "dayjs";
-import { truncate } from "fs";
 import { Badge } from "../../ui/badge";
 
 type Props = {

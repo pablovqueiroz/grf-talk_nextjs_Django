@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Nunito } from "next/font/google";
 import "./globals.css";
 import { handleGetUser } from "../lib/server/auth";
@@ -24,7 +25,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await handleGetUser();
+  const authToken = (await cookies()).get(
+    process.env.NEXT_PUBLIC_AUTH_KEY as string,
+  )?.value;
+  const user = await handleGetUser(authToken);
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={nunito.className}>

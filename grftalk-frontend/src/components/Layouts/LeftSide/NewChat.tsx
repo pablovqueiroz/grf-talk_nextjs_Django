@@ -20,7 +20,8 @@ import { Field, FieldError, FieldLabel } from "@/src/components/ui/field";
 import { Input } from "@/src/components/ui/input";
 
 const NewChat = () => {
-  const { setChat, showNewChat, setShowNewChat } = useChatStore();
+  const { chats, setChat, setChats, showNewChat, setShowNewChat } =
+    useChatStore();
 
   const form = useForm<NewChatData>({
     resolver: zodResolver(newChatSchema),
@@ -33,6 +34,11 @@ const NewChat = () => {
     const response = await createChat(values);
 
     if (response.data) {
+      setChats(
+        chats
+          ? [response.data.chat, ...chats.filter((chat) => chat.id !== response.data?.chat.id)]
+          : [response.data.chat],
+      );
       setChat(response.data.chat);
       setShowNewChat(false);
       form.reset();
@@ -42,11 +48,16 @@ const NewChat = () => {
     toast.error(response.error.message, { position: "top-center" });
   };
 
+  const handleFormSubmit = form.handleSubmit(onSubmit);
+
   return (
     <Drawer open={showNewChat} onOpenChange={setShowNewChat}>
       <DrawerContent>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={(event) => {
+            event.preventDefault();
+            void handleFormSubmit(event);
+          }}
           className="mx-auto w-full max-w-lg"
         >
           <DrawerHeader>

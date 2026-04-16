@@ -19,11 +19,19 @@ import MessageItem from "./MessageItem";
 import Footer from "./Footer";
 
 const Chat = () => {
-  const { chat, chatMessages, loading, setLoading, setChatMessages } =
-    useChatStore();
+  const {
+    chat,
+    chats,
+    chatMessages,
+    loading,
+    setLoading,
+    setChatMessages,
+    setChats,
+  } = useChatStore();
   const { user } = useAuthStore();
 
   const bodyMessageRef = useRef<HTMLDivElement>(null);
+  const messages = chatMessages ?? [];
 
   const handleGetMessages = async () => {
     if (!chat) return;
@@ -61,7 +69,22 @@ const Chat = () => {
 
     if (response.error || !response.data) {
       toast.error(response.error.message, { position: "top-center" });
+      return;
     }
+
+    const nextMessages = [...messages, response.data.message];
+    setChatMessages(nextMessages);
+    setChats(
+      chats?.map((item) =>
+        item.id === chat.id
+          ? {
+              ...item,
+              last_message: response.data.message,
+              viewed_at: response.data.message.created_at,
+            }
+          : item,
+      ) ?? null,
+    );
   };
 
   const handleDeleteMessage = async (message_id: number) => {
@@ -71,7 +94,23 @@ const Chat = () => {
 
     if (response.error || !response.data) {
       toast.error("Error deleting message.", { position: "top-center" });
+      return;
     }
+
+    const nextMessages = messages.filter((message) => message.id !== message_id);
+    setChatMessages(nextMessages);
+    const lastMessage = nextMessages.at(-1) ?? null;
+
+    setChats(
+      chats?.map((item) =>
+        item.id === chat.id
+          ? {
+              ...item,
+              last_message: lastMessage,
+            }
+          : item,
+      ) ?? null,
+    );
   };
 
   const scrollToBottom = () => {
@@ -79,8 +118,13 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (chatMessages === null) handleGetMessages();
-  }, [chat]);
+    if (!chat?.id) {
+      setChatMessages(null);
+      return;
+    }
+
+    handleGetMessages();
+  }, [chat?.id]);
 
   useEffect(() => {
     if (chatMessages && chatMessages.length > 0) {
@@ -142,9 +186,9 @@ const Chat = () => {
           <div className="flex items-center justify-center h-full">
             <ScaleLoader color="#493cdd" />
           </div>
-        ) : (
+        ) : messages.length > 0 ? (
           <div className="space-y-8 p-7" ref={bodyMessageRef}>
-            {chatMessages?.map((data) => (
+            {messages.map((data) => (
               <div
                 key={data.id}
                 className={`flex ${data.from_user.id === user?.id ? "justify-end" : "justify-start"}`}
@@ -152,6 +196,10 @@ const Chat = () => {
                 <MessageItem data={data} onDelete={handleDeleteMessage} />
               </div>
             ))}
+          </div>
+        ) : (
+          <div className="flex h-full items-center justify-center px-6 text-center text-sm font-medium text-slate-500 dark:text-slate-400">
+            No messages in this conversation yet.
           </div>
         )}
       </div>

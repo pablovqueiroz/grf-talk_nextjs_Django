@@ -68,11 +68,20 @@ const MessageItem = ({ data, onDelete }: Props) => {
       {data.from_user.id == user?.id && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <EllipsisVertical className="size-5 text-slate-500 dark:text-slate-400 hover:text-primary cursor-pointer m-5" />
-            <Button variant="outline">Open</Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="m-5 cursor-pointer text-slate-500 dark:text-slate-400"
+              aria-label="Open message actions"
+            >
+              <EllipsisVertical className="size-5" />
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => onDelete(data.id)}
+            >
               <Trash2 className="mr-2 size-4" />
               <span>Delete message</span>
             </DropdownMenuItem>
