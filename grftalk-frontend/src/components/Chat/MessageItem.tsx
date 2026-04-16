@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/src/stores/authStore";
 import { AudioAttachment, FileAttachment } from "@/src/types/Attachment";
 import { Message } from "@/src/types/Message";
+import { resolveMediaUrl } from "@/src/lib/media";
 import { CheckCheck, EllipsisVertical, FileText, Trash2 } from "lucide-react";
 import Image from "next/image";
 
@@ -23,17 +24,20 @@ type Props = {
 
 const FileMessage = ({ data }: { data: FileAttachment }) => (
   <div className="flex items-center">
-    <a href={data.src} target="_blank">
+    <a href={resolveMediaUrl(data.src)} target="_blank">
       {data.content_type.startsWith("image/") ? (
         <Image
           className="md:max-w-96 h-80 object-cover rounded-md"
-          src={data.src}
+          src={resolveMediaUrl(data.src)}
           alt={data.name}
+          unoptimized
+          width={384}
+          height={320}
         />
       ) : data.content_type.startsWith("video/") ? (
         <video
           className="md:max-w-96 h-80 object-cover rounded-md"
-          src={data.src}
+          src={resolveMediaUrl(data.src)}
           controls
         />
       ) : (
@@ -56,7 +60,7 @@ const FileMessage = ({ data }: { data: FileAttachment }) => (
 
 const AudioMessage = ({ data }: { data: AudioAttachment }) => (
   <audio controls>
-    <source src={data.src} type="audio/mpeg" />
+    <source src={resolveMediaUrl(data.src)} type="audio/mpeg" />
   </audio>
 );
 
