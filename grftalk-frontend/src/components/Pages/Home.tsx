@@ -1,11 +1,12 @@
 "use client";
 
 import { useChatStore } from "@/src/stores/chatStore";
-import Chat from "../Chat/Index";
+
 import Image from "next/image";
 import HomeSectionBg from "@/src/assets/home-section-bg.svg";
 import { Button } from "../ui/button";
 import { Lock } from "lucide-react";
+import Chat from "../Chat";
 
 const HomePage = () => {
   const { chat, setShowNewChat } = useChatStore();
@@ -28,7 +29,7 @@ const HomePage = () => {
             </p>
 
             <Button
-              className="rounded-full"
+              className="rounded-full cursor-pointer"
               onClick={() => setShowNewChat(true)}
             >
               New Chat
